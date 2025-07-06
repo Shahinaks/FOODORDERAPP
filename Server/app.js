@@ -91,8 +91,8 @@ if (fs.existsSync(buildPath)) {
 
   // ✅ Safe wildcard route
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(buildPath, 'index.html'));
-  });
+  res.sendFile(path.resolve(buildPath, 'index.html'));
+});
 } else {
   console.warn('⚠️ Build folder not found. Skipping frontend serving.');
 }
