@@ -85,9 +85,12 @@ app.use('/api/notifications', notificationRoutes);
 
 
 const buildPath = path.join(__dirname, 'build');
+
 if (fs.existsSync(buildPath)) {
   app.use(express.static(buildPath));
-  app.get('/:path(*)', (req, res) => {
+
+  
+  app.get(/^\/(?!api\/).*/, (req, res) => {
     res.sendFile(path.resolve(buildPath, 'index.html'));
   });
 } else {
