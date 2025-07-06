@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../api/axiosInstance';
-import { getAuth } from 'firebase/auth';
+import { useAuth } from '../context/AuthContext';
 import {
   Container,
   Table,
@@ -10,9 +10,9 @@ import {
   Alert,
 } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-const API = import.meta.env.VITE_API_URL;
 
 const AdminOrdersPage = () => {
+  const { firebaseToken } = useAuth();
   const [orders, setOrders] = useState([]);
   const [statusFilter, setStatusFilter] = useState('');
   const [loading, setLoading] = useState(true);
@@ -20,14 +20,11 @@ const AdminOrdersPage = () => {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const auth = getAuth();
-      const token = await auth.currentUser.getIdToken();
-
       const { data } = await axios.get('/orders', {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${firebaseToken}` },
       });
       setOrders(data);
-    } catch (err) {
+    } catch {
       toast.error('Failed to fetch orders');
     } finally {
       setLoading(false);
@@ -36,39 +33,31 @@ const AdminOrdersPage = () => {
 
   const updateStatus = async (orderId, newStatus) => {
     try {
-      const auth = getAuth();
-      const token = await auth.currentUser.getIdToken();
-
       await axios.put(`/orders/${orderId}/status`, { status: newStatus }, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${firebaseToken}` },
       });
-
       toast.success('Order status updated');
       fetchOrders();
-    } catch (err) {
+    } catch {
       toast.error('Failed to update status');
     }
   };
 
   const cancelOrder = async (orderId) => {
     try {
-      const auth = getAuth();
-      const token = await auth.currentUser.getIdToken();
-
       await axios.put(`/orders/${orderId}/cancel`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${firebaseToken}` },
       });
-
       toast.success('Order cancelled');
       fetchOrders();
-    } catch (err) {
+    } catch {
       toast.error('Failed to cancel order');
     }
   };
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    if (firebaseToken) fetchOrders();
+  }, [firebaseToken]);
 
   const statusOptions = ['placed', 'preparing', 'out-for-delivery', 'delivered', 'cancelled'];
 
@@ -122,7 +111,7 @@ const AdminOrdersPage = () => {
               <tr key={order._id}>
                 <td>{order._id.slice(0, 8)}...</td>
                 <td>{order.user?.name || 'N/A'}</td>
-                <td>{order.orderStatus}</td>
+                <td className="text-capitalize">{order.orderStatus}</td>
                 <td>₹{order.totalAmount.toFixed(2)}</td>
                 <td>{new Date(order.createdAt).toLocaleString()}</td>
                 <td className="d-flex gap-2 flex-wrap">
