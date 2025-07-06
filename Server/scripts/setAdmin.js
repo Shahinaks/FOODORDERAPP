@@ -1,8 +1,9 @@
-import admin from '../firebase/firebaseAdmin.js'; 
+import admin from '../firebase/firebaseAdmin.js';
 
 const makeUserAdmin = async (uid) => {
   try {
     await admin.auth().setCustomUserClaims(uid, { role: 'admin' });
+    await admin.auth().revokeRefreshTokens(uid); // ✅ Ensures claim shows up in token
     console.log(`✅ User ${uid} is now an admin`);
   } catch (err) {
     console.error('❌ Failed to set admin claim:', err);
