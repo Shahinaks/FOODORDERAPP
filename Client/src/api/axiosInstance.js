@@ -2,7 +2,8 @@ import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'https://foodorderapp-server.onrender.com/api',
+
   withCredentials: false,
 });
 
