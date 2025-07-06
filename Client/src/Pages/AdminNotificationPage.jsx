@@ -1,114 +1,80 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from '../api/axiosInstance';
+import { Table, Container, Spinner, Alert } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
-import { FaBell, FaTrash } from 'react-icons/fa';
-
 const API = import.meta.env.VITE_API_URL;
 
-const AdminNotificationPage = () => {
-  const [notifications, setNotifications] = useState([]);
-  const [title, setTitle] = useState('');
-  const [message, setMessage] = useState('');
+const AdminPaymentsPage = () => {
   const { firebaseToken } = useAuth();
+  const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const fetchNotifications = async () => {
+  const fetchAllPayments = async () => {
     try {
-      const res = await axios.get(`${API}/notifications`, {
-        headers: { Authorization: `Bearer ${firebaseToken}` },
+      const res = await axios.get('/payments/all', {
+        headers: {
+          Authorization: `Bearer ${firebaseToken}`,
+        },
       });
-      setNotifications(Array.isArray(res.data) ? res.data : []);
+      setPayments(res.data);
     } catch (err) {
-      console.error('Fetch error:', err);
-      setNotifications([]);
-    }
-  };
-
-  const handleCreate = async () => {
-    try {
-      await axios.post(`${API}/notifications`, { title, message }, {
-        headers: { Authorization: `Bearer ${firebaseToken}` },
-      });
-      setTitle('');
-      setMessage('');
-      fetchNotifications();
-    } catch (err) {
-      console.error('Create error:', err);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`${API}/notifications/${id}`, {
-        headers: { Authorization: `Bearer ${firebaseToken}` },
-      });
-      fetchNotifications();
-    } catch (err) {
-      console.error('Delete error:', err);
+      console.error('Admin payment fetch failed:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (firebaseToken) {
-      fetchNotifications();
-    }
+    if (firebaseToken) fetchAllPayments();
   }, [firebaseToken]);
 
   return (
-    <div className="container py-5" style={{ background: '#f8f9fa', minHeight: '100vh' }}>
-      <h2 className="mb-4 text-center text-dark fw-bold">📢 Admin Notifications</h2>
-
-      <div
-        className="p-4 mb-5 rounded shadow-sm bg-white border"
-        style={{ maxWidth: '600px', margin: '0 auto' }}
-      >
-        <input
-          type="text"
-          className="form-control mb-3"
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-          placeholder="Notification Title"
-        />
-        <textarea
-          className="form-control mb-3"
-          value={message}
-          onChange={e => setMessage(e.target.value)}
-          placeholder="Notification Message"
-        />
-        <button className="btn btn-primary w-100" onClick={handleCreate}>
-          ➕ Create Notification
-        </button>
-      </div>
-
-      <div className="row g-4">
-        {notifications.length > 0 ? (
-          notifications.map((n) => (
-            <div key={n._id} className="col-md-6 col-lg-4">
-              <div className="card shadow-sm h-100">
-                <div className="card-body">
-                  <div className="d-flex align-items-center mb-2">
-                    <FaBell className="text-primary me-2" />
-                    <h5 className="card-title mb-0">{n.title}</h5>
-                  </div>
-                  <p className="card-text small text-muted">{n.message}</p>
-                </div>
-                <div className="card-footer bg-transparent border-top-0 d-flex justify-content-end">
-                  <button
-                    className="btn btn-outline-danger btn-sm"
-                    onClick={() => handleDelete(n._id)}
-                  >
-                    <FaTrash className="me-1" />
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-center text-muted">No notifications found.</div>
-        )}
-      </div>
-    </div>
+    <Container className="py-4">
+      <h3 className="mb-4">All Payments (Admin)</h3>
+      {loading ? (
+        <Spinner animation="border" />
+      ) : payments.length === 0 ? (
+        <Alert variant="info">No payment records found.</Alert>
+      ) : (
+        <Table striped bordered hover responsive>
+          <thead className="table-dark">
+            <tr>
+              <th>#</th>
+              <th>User</th>
+              <th>Order</th>
+              <th>Amount</th>
+              <th>Method</th>
+              <th>Status</th>
+              <th>Paid At</th>
+            </tr>
+          </thead>
+          <tbody>
+            {payments.map((p, i) => (
+              <tr key={p._id}>
+                <td>{i + 1}</td>
+                <td>{p.user?.name || '—'}</td>
+                <td>{p.order?._id || '—'}</td>
+                <td>₹{p.amount.toFixed(2)}</td>
+                <td>{p.method}</td>
+                <td>
+                  <span className={`badge bg-${
+                    p.status === 'completed'
+                      ? 'success'
+                      : p.status === 'pending'
+                      ? 'warning'
+                      : 'danger'
+                  }`}>
+                    {p.status}
+                  </span>
+                </td>
+                <td>{new Date(p.paidAt).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
+    </Container>
   );
 };
 
-export default AdminNotificationPage;
+export default AdminPaymentsPage;
