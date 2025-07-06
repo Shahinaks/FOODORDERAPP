@@ -17,30 +17,32 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const server = http.createServer(app);
 
+
 initSocket(server);
+
 
 const allowedOrigins = [
   'http://localhost:5173',
   'https://foodorderapp-client.onrender.com',
 ];
 
+
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.error('❌ CORS blocked request from:', origin);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: allowedOrigins,
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
+
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
+
 app.use(express.json());
 app.use(cookieParser());
 
-// Route imports
+
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import menuRoutes from './routes/menuItem.routes.js';
@@ -58,7 +60,7 @@ import adminRoutes from './routes/admin.routes.js';
 import paymentIntentRoutes from './routes/paymentIntent.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 
-// Route bindings
+
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/menu', menuRoutes);
@@ -76,7 +78,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api', paymentIntentRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-// ✅ Wildcard route fix for Express v5+
+
 const buildPath = path.join(__dirname, 'build');
 if (fs.existsSync(buildPath)) {
   app.use(express.static(buildPath));
@@ -87,13 +89,13 @@ if (fs.existsSync(buildPath)) {
   console.warn('⚠️ Build folder not found. Skipping frontend serving.');
 }
 
-const PORT = process.env.PORT || 5000;
 
+const PORT = process.env.PORT || 5000;
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');
     server.listen(PORT, () =>
-      console.log(`🚀 Server with Socket.IO running on port ${PORT}`)
+      console.log(`🚀 Server running at http://localhost:${PORT}`)
     );
   })
-  .catch(err => console.error('❌ DB connection error:', err));
+  .catch(err => console.error('❌ MongoDB connection error:', err));
