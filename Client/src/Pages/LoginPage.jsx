@@ -254,8 +254,15 @@ const styles = {
     padding: '0.25rem 0',
     textAlign: 'center',
   },
-  eyeIcon: {
-    position: 'absolute',
-    right: '10px',
-    top: '50%',
-    transform
+
+ eyeIcon: { position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#fff', }, 
+ socialRow: { marginBottom: '12px', }, 
+ googleBtn: { backgroundColor: '#ffffff', color: '#444', border: '1px solid #ccc', borderRadius: '5px', fontSize: '0.9rem', fontWeight: '500', padding: '0.45rem 1rem', boxShadow: '0 2px 6px rgba(0,0,0,0.1)', },
+ divider: { textAlign: 'center', color: '#aaa', marginBottom: '10px', fontSize: '0.85rem', },
+ extraRow: { display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '1rem', color: '#ddd', }, 
+ forgotLink: { cursor: 'pointer', color: '#ff944d', },
+ submitBtn: { backgroundColor: '#ff4d1a', border: 'none', width: '100%', fontWeight: 'bold', },
+ signupLink: { marginTop: '1rem', textAlign: 'center', fontSize: '0.85rem', color: '#fff', },
+ link: { color: '#ff944d', textDecoration: 'underline', }, };
+export default LoginPage;
+
