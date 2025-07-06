@@ -7,8 +7,6 @@ import axios from '../api/axiosInstance';
 import { toast } from 'react-toastify';
 import StripeCheckoutForm from '../components/StripeCheckoutForm';
 import { useCart } from '../context/CartContext';
-const API = import.meta.env.VITE_API_URL;
-
 
 const CheckoutPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -27,9 +25,7 @@ const CheckoutPage = () => {
   const [stripeOrderId, setStripeOrderId] = useState(null);
   const { clearCart } = useCart();
 
-
   const navigate = useNavigate();
-  const headers = { Authorization: `Bearer ${localStorage.getItem('firebaseToken')}` };
 
   useEffect(() => {
     fetchCart();
@@ -53,7 +49,7 @@ const CheckoutPage = () => {
 
   const fetchCart = async () => {
     try {
-      const res = await axios.get('/cart', { headers });
+      const res = await axios.get('/cart');
       setCartItems(res.data.items || []);
     } catch (err) {
       console.error('Failed to fetch cart:', err);
@@ -62,7 +58,7 @@ const CheckoutPage = () => {
 
   const fetchCoupons = async () => {
     try {
-      const res = await axios.get('/coupons/available', { headers });
+      const res = await axios.get('/coupons/available');
       const valid = res.data.filter(c => c.isActive && new Date(c.expirationDate) > new Date());
       setAvailableCoupons(valid);
     } catch (err) {
@@ -120,7 +116,7 @@ const CheckoutPage = () => {
         couponCode: appliedCoupon?.code || '',
         paymentMethod,
         paymentMethodLabel,
-      }, { headers });
+      });
 
       setStripeOrderId(res.data._id);
     } catch (err) {
@@ -157,7 +153,7 @@ const CheckoutPage = () => {
         couponCode: appliedCoupon?.code || '',
         paymentMethod,
         paymentMethodLabel
-      }, { headers });
+      });
 
       const newOrderId = response.data._id;
       await axios.post('/payments', {
@@ -166,7 +162,7 @@ const CheckoutPage = () => {
         method: paymentMethod,
         transactionId: '',  
         status: 'pending'
-      }, { headers });
+      });
 
       await clearCart();
       saveRecentAddress(deliveryAddress);
