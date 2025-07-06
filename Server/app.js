@@ -19,10 +19,24 @@ const server = http.createServer(app);
 
 initSocket(server);
 
-app.use(cors({
-  origin: 'http://localhost:5173',
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://foodorderapp-client.onrender.com',
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.error('❌ CORS blocked request from:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
-}));
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
