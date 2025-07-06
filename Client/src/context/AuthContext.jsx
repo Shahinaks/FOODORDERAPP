@@ -25,9 +25,11 @@ export const AuthProvider = ({ children }) => {
           setFirebaseToken(token);
           localStorage.setItem('firebaseToken', token);
 
-          const res = await fetch('http://localhost:5000/api/users/check', {
+          const res = await fetch(`${API}/users/check`, {
             headers: { Authorization: `Bearer ${token}` },
           });
+
+
 
           if (res.ok) {
             const data = await res.json();
