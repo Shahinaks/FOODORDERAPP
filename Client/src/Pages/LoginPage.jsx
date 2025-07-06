@@ -5,6 +5,8 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   sendPasswordResetEmail,
+  EmailAuthProvider,
+  linkWithCredential,
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -38,6 +40,7 @@ const LoginPage = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, form.email, form.password);
       const user = userCredential.user;
+      console.log("Logged in UID:", user.uid); 
 
       const token = await user.getIdToken();
       localStorage.setItem('firebase_token', token);
@@ -51,14 +54,13 @@ const LoginPage = () => {
 
       navigate(data.user.role === 'admin' ? '/admin/overview' : '/menu');
     } catch (err) {
-      console.error('Login error:', err.code, err.message);
-
+      console.error('Login error:', err.code);
       if (err.code === 'auth/user-not-found') {
         setError('User not found. Please check your email or sign up.');
       } else if (err.code === 'auth/wrong-password') {
         setError('Incorrect password. Please try again.');
       } else if (err.code === 'auth/invalid-credential') {
-        setError('This account may be linked with Google. Try using "Continue with Google" instead.');
+        setError('This account may be linked with Google. Try using "Continue with Google".');
       } else if (err.code === 'auth/invalid-email') {
         setError('Invalid email format.');
       } else {
@@ -73,6 +75,22 @@ const LoginPage = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
+      console.log('Google login:', user.email);
+
+      const providerAlreadyLinked = user.providerData.some(p => p.providerId === 'password');
+      if (!providerAlreadyLinked) {
+        const emailCredential = EmailAuthProvider.credential(form.email, form.password);
+        try {
+          await linkWithCredential(user, emailCredential);
+        } catch (linkErr) {
+          console.error('Linking error:', linkErr.code);
+          if (linkErr.code === 'auth/provider-already-linked') {
+            setError('This account is already linked with a password. Try logging in manually.');
+            return;
+          }
+        }
+      }
+
       const token = await user.getIdToken();
       localStorage.setItem('firebase_token', token);
 
@@ -89,6 +107,7 @@ const LoginPage = () => {
       setError('Google login failed.');
     }
   };
+
 
   const handleResetPassword = async () => {
     if (!form.email) return setError('Enter your email to reset password');
@@ -254,15 +273,60 @@ const styles = {
     padding: '0.25rem 0',
     textAlign: 'center',
   },
+  eyeIcon: {
+    position: 'absolute',
+    right: '10px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    cursor: 'pointer',
+    color: '#fff',
+  },
+  socialRow: {
+    marginBottom: '12px',
+  },
+  googleBtn: {
+    backgroundColor: '#ffffff',
+    color: '#444',
+    border: '1px solid #ccc',
+    borderRadius: '5px',
+    fontSize: '0.9rem',
+    fontWeight: '500',
+    padding: '0.45rem 1rem',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+  },
+  divider: {
+    textAlign: 'center',
+    color: '#aaa',
+    marginBottom: '10px',
+    fontSize: '0.85rem',
+  },
+  extraRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    fontSize: '0.8rem',
+    marginBottom: '1rem',
+    color: '#ddd',
+  },
+  forgotLink: {
+    cursor: 'pointer',
+    color: '#ff944d',
+  },
+  submitBtn: {
+    backgroundColor: '#ff4d1a',
+    border: 'none',
+    width: '100%',
+    fontWeight: 'bold',
+  },
+  signupLink: {
+    marginTop: '1rem',
+    textAlign: 'center',
+    fontSize: '0.85rem',
+    color: '#fff',
+  },
+  link: {
+    color: '#ff944d',
+    textDecoration: 'underline',
+  },
+};
 
- eyeIcon: { position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: '#fff', }, 
- socialRow: { marginBottom: '12px', }, 
- googleBtn: { backgroundColor: '#ffffff', color: '#444', border: '1px solid #ccc', borderRadius: '5px', fontSize: '0.9rem', fontWeight: '500', padding: '0.45rem 1rem', boxShadow: '0 2px 6px rgba(0,0,0,0.1)', },
- divider: { textAlign: 'center', color: '#aaa', marginBottom: '10px', fontSize: '0.85rem', },
- extraRow: { display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '1rem', color: '#ddd', }, 
- forgotLink: { cursor: 'pointer', color: '#ff944d', },
- submitBtn: { backgroundColor: '#ff4d1a', border: 'none', width: '100%', fontWeight: 'bold', },
- signupLink: { marginTop: '1rem', textAlign: 'center', fontSize: '0.85rem', color: '#fff', },
- link: { color: '#ff944d', textDecoration: 'underline', }, };
 export default LoginPage;
-
