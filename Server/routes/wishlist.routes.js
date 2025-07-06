@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.post('/', verifyFirebaseToken, addToWishlist);
 router.get('/', verifyFirebaseToken, getWishlist);
+router.delete('/', verifyFirebaseToken, clearWishlist);             
 router.delete('/:menuItemId', verifyFirebaseToken, removeFromWishlist);
-router.delete('/', verifyFirebaseToken, clearWishlist);
 verifyFirebaseToken
 export default router;
