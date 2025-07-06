@@ -1,13 +1,30 @@
 import admin from 'firebase-admin';
 import { readFileSync } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const serviceAccountPath = '/etc/secrets/firebase-adminsdk.json';
-const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf-8'));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
+let serviceAccount;
+
+try {
+  if (process.env.FIREBASE_ADMIN_SDK) {
+   
+    serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_SDK);
+  } else {
+ 
+    const localPath = path.resolve(__dirname, './firebase-adminsdk.json');
+    serviceAccount = JSON.parse(readFileSync(localPath, 'utf-8'));
+  }
+
+  if (!admin.apps.length) {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+  }
+} catch (error) {
+  console.error('🔥 Firebase Admin SDK init failed:', error.message);
 }
 
 export default admin;
