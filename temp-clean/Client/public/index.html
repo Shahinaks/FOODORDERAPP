@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Food Order App</title>
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/javascript">
+    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    (function () {
+      var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      s1.src = 'https://embed.tawk.to/6864291f16d5a819113f43f4/1iv3k19br';
+      s1.charset = 'UTF-8';
+      s1.setAttribute('crossorigin', '*');
+      s0.parentNode.insertBefore(s1, s0);
+    })();
+  </script>
+
+  <script type="text/javascript">
+    Tawk_API = Tawk_API || {};
+    Tawk_API.onChatMessageVisitor = function (message) {
+      const text = message.content?.toLowerCase();
+      const replies = {
+        'cancel order': "To cancel your order, go to 'My Orders' → select → click 'Cancel'.",
+        'refund': "Refunds take 2–3 business days after order cancellation.",
+        'track order': "Track your order in the 'My Orders' section.",
+        'offers': "Check the homepage or coupon section for latest offers!",
+        'payment failed': "Retry the payment or try a different method.",
+        'menu': "Browse the full menu from the top navigation bar.",
+        'profile': "Visit your 'Profile' to update info or change password.",
+        'agent': "A support agent will be with you shortly!",
+        'login issue': "Try resetting your password or checking your email.",
+        'signup': "Click on 'Sign Up' in the top right to create an account."
+      };
+
+      for (const keyword in replies) {
+        if (text?.includes(keyword)) {
+          setTimeout(() => {
+            Tawk_API.sendMessage({
+              type: 'text',
+              content: replies[keyword]
+            });
+          }, 1000);
+          break;
+        }
+      }
+    };
+  </script>
+</body>
+
+</html>

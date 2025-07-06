@@ -1,0 +1,472 @@
+/* ================= Root Theme Variables ================= */
+:root {
+  --primary-color: orange;
+  --secondary-bg: #111;
+  --card-bg: #222;
+  --highlight-color: #ffc107;
+  --text-light: #fff;
+  --text-muted: #aaa;
+  --border-light: #333;
+  --accent-color: #00796b;
+}
+
+/* ================= Global Reset and Theme ================= */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #000;
+  color: var(--text-light);
+}
+
+/* ================= Navbar ================= */
+.navbar-dark .navbar-brand {
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.navbar-dark .nav-link {
+  color: var(--text-light);
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navbar-dark .nav-link:hover,
+.navbar-dark .nav-link.active {
+  color: var(--primary-color);
+}
+
+/* ================= Hero Section ================= */
+.hero-container {
+  position: relative;
+  height: 90vh;
+  overflow: hidden;
+}
+
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.hero-btn,
+button.primary {
+  background: var(--primary-color);
+  color: #000;
+  padding: 12px 24px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+button.secondary {
+  background: none;
+  color: var(--text-light);
+  border: 1px solid var(--text-light);
+}
+
+/* ================= Flip Cards ================= *
+.flip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1.5rem;
+  justify-items: center;
+}
+
+.flip-card {
+  background-color: transparent;
+  perspective: 1000px;
+  width: 160px;
+  height: 160px;
+  position: relative;
+  cursor: pointer;
+}
+
+.flip-card-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.flip-card-front {
+  background-color: var(--secondary-bg);
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.flip-card-back {
+  background-color: var(--card-bg);
+  transform: rotateY(180deg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.flip-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--highlight-color);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+/* ================= Timeline ================= */
+.alt-timeline {
+  display: grid;
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.alt-timeline-item {
+  background: var(--card-bg);
+  border-left: 4px solid var(--primary-color);
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* ================= Gallery ================= */
+.gallery-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* ================= Cards ================= */
+.menu-item-card {
+  border-radius: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.menu-item-card:hover {
+  transform: scale(1.03);
+}
+
+.menu-item-img {
+  height: 200px;
+  object-fit: cover;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.card-title {
+  font-weight: bold;
+}
+
+.card-text small {
+  color: var(--text-muted);
+}
+
+.menu-card {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.menu-card:hover {
+  transform: scale(1.02);
+}
+
+.badge {
+  font-size: 0.8rem;
+}
+
+/* ================= Sidebar ================= */
+.sidebar-nav {
+  width: 200px;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+.sidebar-nav .nav-link {
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+.sidebar-nav .nav-link.active {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+/* ================= Footer ================= */
+.footer-link {
+  color: #ccc;
+  text-decoration: none;
+  display: block;
+  margin: 0.25rem 0;
+}
+
+.footer-link:hover {
+  color: var(--primary-color);
+}
+
+/* ================= Utility ================= */
+.bg-dark {
+  background-color: #000 !important;
+}
+
+.hover-shadow {
+  transition: all 0.3s ease;
+}
+
+.hover-shadow:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15);
+}
+
+.category-pill {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.category-pill:hover {
+  transform: scale(1.1);
+}
+
+/* ================= Accessibility & Print ================= */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+@media print {
+  body {
+    background: white !important;
+    color: black;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    /* for Safari */
+
+  }
+
+  .btn,
+  nav,
+  footer,
+  .print-hide,
+  .map-container,
+  .leaflet-container {
+    display: none !important;
+  }
+
+  .invoice-card {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .invoice {
+    width: 100%;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  h2,
+  h5,
+  p {
+    margin-bottom: 6px !important;
+  }
+
+  @page {
+    margin: 1in;
+  }
+}
+
+/* Fullscreen background image with easel+board */
+.signup-wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.signup-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 1;
+}
+
+/* Whiteboard form area overlay */
+.signup-form-overlay {
+  position: absolute;
+  top: 20%;
+  /* adjust based on your board image */
+  left: 62%;
+  /* center over board */
+  transform: translate(-50%, 0);
+  width: 28%;
+  z-index: 2;
+  background-color: rgba(255, 255, 255, 0.96);
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  font-family: 'Courier New', monospace;
+  color: #222;
+}
+
+/* Form inputs styled like chalk text */
+.signup-form-overlay input[type="text"],
+.signup-form-overlay input[type="email"],
+.signup-form-overlay input[type="password"],
+.signup-form-overlay input[type="tel"] {
+  background-color: transparent;
+  color: #222;
+  border: none;
+  border-bottom: 1px dashed #555;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  outline: none;
+  padding: 0.5rem 0;
+}
+
+/* Buttons */
+.signup-form-overlay button {
+  width: 100%;
+  font-weight: bold;
+  border: none;
+  background-color: #222;
+  color: #fff;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+.signup-form-overlay button:hover {
+  background-color: #444;
+}
+
+/* Social login buttons */
+.signup-form-overlay .btn-outline-dark {
+  border: 1px solid #444;
+  background-color: transparent;
+  color: #222;
+}
+
+.signup-form-overlay .btn-outline-dark:hover {
+  background-color: #222;
+  color: #fff;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .signup-form-overlay {
+    width: 80%;
+    left: 50%;
+    top: 15%;
+    transform: translate(-50%, 0);
+    padding: 1rem;
+  }
+}
+
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f1f1f1;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+/* ======= Desktop ======= */
+.tablet-wrapper {
+  position: relative;
+  width: 90vw;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.tablet-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Form over tablet */
+.tablet-form {
+  position: absolute;
+  top: 15%;
+  /* Push it vertically to fit screen */
+  left: 55%;
+  /* Horizontal positioning on tablet */
+  width: 36%;
+  /* Smaller width to stay inside tablet */
+  transform: translate(-50%, 0);
+  font-size: 0.85rem;
+  font-family: 'Courier New', monospace;
+  color: #000;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+/* ======= Mobile Responsive ======= */
+@media (max-width: 768px) {
+  .tablet-wrapper {
+    width: 100vw;
+    max-width: 100%;
+    position: relative;
+  }
+
+  .tablet-image {
+    width: 100%;
+    height: 50vh;
+  }
+
+  .tablet-form {
+    top: 20%;
+    left: 70%;
+    width: 50%;
+    font-size: 0.85rem;
+    transform: translate(-50%, 0);
+    padding: 0.5rem;
+  }
+
+  .tablet-form h5 {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+}

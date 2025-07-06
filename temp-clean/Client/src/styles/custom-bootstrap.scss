@@ -1,0 +1,27 @@
+// src/styles/custom-bootstrap.scss
+
+// Override Bootstrap variables *before* importing Bootstrap
+$body-bg: #121212;
+$body-color: #e0e0e0;
+$card-bg: #1e1e1e;
+$card-color: #ffffff;
+$primary: #3b82f6;
+$danger: #f87171;
+$input-bg: #2a2a2a;
+$input-color: #e0e0e0;
+$accordion-bg: #1e1e1e;
+$accordion-color: #e0e0e0;
+$modal-content-bg: #1e1e1e;
+$modal-content-color: #e0e0e0;
+
+// Import Bootstrap with your overrides
+@import "bootstrap/scss/bootstrap";
+
+// Optional overrides
+.card-title, .card-text {
+  color: $body-color;
+}
+
+.form-control::placeholder {
+  color: #aaa;
+}
