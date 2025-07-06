@@ -7,6 +7,11 @@ const CartPage = () => {
   const { cartItems, loading, removeFromCart, updateCartItem } = useCart();
   const navigate = useNavigate();
 
+  const totalAmount = cartItems.reduce(
+    (acc, item) => acc + item.quantity * (item.menuItem?.price || 0),
+    0
+  );
+
   const styles = {
     page: {
       background: 'linear-gradient(to bottom right, #fdf6e3, #f9e8d9)',
@@ -107,11 +112,11 @@ const CartPage = () => {
                   <div className="d-flex align-items-center mb-3 gap-2">
                     <Button
                       style={styles.quantityBtn}
+                      aria-label="Decrease quantity"
                       onClick={() =>
                         item.quantity > 1
                           ? updateCartItem(menuItem._id, item.quantity - 1)
                           : removeFromCart(menuItem._id)
-
                       }
                     >
                       −
@@ -119,9 +124,9 @@ const CartPage = () => {
                     <span className="mx-2">{item.quantity}</span>
                     <Button
                       style={styles.quantityBtn}
+                      aria-label="Increase quantity"
                       onClick={() =>
                         updateCartItem(menuItem._id, item.quantity + 1)
-
                       }
                     >
                       +
@@ -141,6 +146,7 @@ const CartPage = () => {
       </Row>
 
       <div className="text-center mt-5">
+        <div className="mb-3 fs-5 fw-bold">Total: ₹{totalAmount.toFixed(2)}</div>
         <Button style={styles.checkoutBtn} onClick={() => navigate('/checkout')}>
           Proceed to Checkout
         </Button>
