@@ -1,3 +1,4 @@
+// AdminReviewModerationPage.jsx
 import React, { useEffect, useState } from 'react';
 import axios from '../api/axiosInstance';
 import {
@@ -9,17 +10,21 @@ import {
   Form,
 } from 'react-bootstrap';
 import { toast } from 'react-toastify';
+import { useAuth } from '../context/AuthContext';
 const API = import.meta.env.VITE_API_URL;
 
 const AdminReviewModerationPage = () => {
   const [reviews, setReviews] = useState([]);
   const [menuItemFilter, setMenuItemFilter] = useState('');
   const [loading, setLoading] = useState(true);
+  const { firebaseToken } = useAuth();
 
   const fetchReviews = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get('/reviews');
+      const { data } = await axios.get('/reviews', {
+        headers: { Authorization: `Bearer ${firebaseToken}` },
+      });
       setReviews(data);
     } catch (err) {
       toast.error('Failed to fetch reviews');
@@ -29,8 +34,11 @@ const AdminReviewModerationPage = () => {
   };
 
   const deleteReview = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this review?')) return;
     try {
-      await axios.delete(`/reviews/${id}`);
+      await axios.delete(`/reviews/${id}`, {
+        headers: { Authorization: `Bearer ${firebaseToken}` },
+      });
       toast.success('Review deleted');
       fetchReviews();
     } catch (err) {
@@ -39,8 +47,8 @@ const AdminReviewModerationPage = () => {
   };
 
   useEffect(() => {
-    fetchReviews();
-  }, []);
+    if (firebaseToken) fetchReviews();
+  }, [firebaseToken]);
 
   const filteredReviews = menuItemFilter
     ? reviews.filter((r) =>
@@ -81,7 +89,7 @@ const AdminReviewModerationPage = () => {
               <tr key={review._id}>
                 <td>{review.user?.name || 'N/A'}</td>
                 <td>{review.menuItem?.name || 'N/A'}</td>
-                <td>{review.rating}</td>
+                <td><span className="badge bg-warning text-dark">{review.rating} ★</span></td>
                 <td>{review.comment}</td>
                 <td>{new Date(review.createdAt).toLocaleString()}</td>
                 <td>
