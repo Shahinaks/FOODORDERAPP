@@ -5,8 +5,6 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   sendPasswordResetEmail,
-  EmailAuthProvider,
-  linkWithCredential,
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -45,9 +43,7 @@ const LoginPage = () => {
       localStorage.setItem('firebase_token', token);
 
       const res = await fetch(`${API}/users/check`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!res.ok) throw new Error('Failed to fetch user role');
@@ -55,43 +51,16 @@ const LoginPage = () => {
 
       navigate(data.user.role === 'admin' ? '/admin/overview' : '/menu');
     } catch (err) {
-      console.error('Firebase login error:', err.code, err.message);
+      console.error('Login error:', err.code, err.message);
 
-      // Handle Google-linked email trying to log in with password
-      if (
-        err.code === 'auth/user-not-found' ||
-        err.code === 'auth/invalid-credential' ||
-        err.code === 'auth/wrong-password'
-      ) {
-        try {
-          const googleResult = await signInWithPopup(auth, googleProvider);
-          const googleUser = googleResult.user;
-
-          // Try linking email/password to Google account
-          const emailCredential = EmailAuthProvider.credential(form.email, form.password);
-          await linkWithCredential(googleUser, emailCredential);
-
-          const token = await googleUser.getIdToken();
-          localStorage.setItem('firebase_token', token);
-
-          const res = await fetch(`${API}/users/check`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
-          if (!res.ok) throw new Error('Failed to fetch user role');
-          const data = await res.json();
-
-          navigate(data.user.role === 'admin' ? '/admin/overview' : '/menu');
-          return;
-        } catch (linkErr) {
-          console.error('Linking failed:', linkErr.message);
-          setError('Invalid credentials or failed to link account');
-          return;
-        }
-      }
-
-      if (err.code === 'auth/invalid-email') {
-        setError('Invalid email format');
+      if (err.code === 'auth/user-not-found') {
+        setError('User not found. Please check your email or sign up.');
+      } else if (err.code === 'auth/wrong-password') {
+        setError('Incorrect password. Please try again.');
+      } else if (err.code === 'auth/invalid-credential') {
+        setError('This account may be linked with Google. Try using "Continue with Google" instead.');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Invalid email format.');
       } else {
         setError('Login failed. Please check your credentials.');
       }
@@ -117,7 +86,7 @@ const LoginPage = () => {
       navigate(data.user.role === 'admin' ? '/admin/overview' : '/menu');
     } catch (err) {
       console.error('Google login error:', err);
-      setError('Google login failed');
+      setError('Google login failed.');
     }
   };
 
@@ -289,56 +258,4 @@ const styles = {
     position: 'absolute',
     right: '10px',
     top: '50%',
-    transform: 'translateY(-50%)',
-    cursor: 'pointer',
-    color: '#fff',
-  },
-  socialRow: {
-    marginBottom: '12px',
-  },
-  googleBtn: {
-    backgroundColor: '#ffffff',
-    color: '#444',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    fontSize: '0.9rem',
-    fontWeight: '500',
-    padding: '0.45rem 1rem',
-    boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-  },
-  divider: {
-    textAlign: 'center',
-    color: '#aaa',
-    marginBottom: '10px',
-    fontSize: '0.85rem',
-  },
-  extraRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    fontSize: '0.8rem',
-    marginBottom: '1rem',
-    color: '#ddd',
-  },
-  forgotLink: {
-    cursor: 'pointer',
-    color: '#ff944d',
-  },
-  submitBtn: {
-    backgroundColor: '#ff4d1a',
-    border: 'none',
-    width: '100%',
-    fontWeight: 'bold',
-  },
-  signupLink: {
-    marginTop: '1rem',
-    textAlign: 'center',
-    fontSize: '0.85rem',
-    color: '#fff',
-  },
-  link: {
-    color: '#ff944d',
-    textDecoration: 'underline',
-  },
-};
-
-export default LoginPage;
+    transform
