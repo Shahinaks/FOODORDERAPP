@@ -45,12 +45,9 @@ const LoginPage = () => {
       localStorage.setItem('firebase_token', token);
 
       const res = await fetch(`${API}/users/check`, {
-        method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
         },
-        credentials: 'include',
       });
 
       if (!res.ok) throw new Error('Failed to fetch user role');
