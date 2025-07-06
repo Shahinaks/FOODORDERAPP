@@ -13,5 +13,5 @@ router.post('/', verifyFirebaseToken, addToWishlist);
 router.get('/', verifyFirebaseToken, getWishlist);
 router.delete('/', verifyFirebaseToken, clearWishlist);             
 router.delete('/:menuItemId', verifyFirebaseToken, removeFromWishlist);
-verifyFirebaseToken
+
 export default router;
