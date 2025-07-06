@@ -13,8 +13,8 @@ import { verifyFirebaseToken, isAdmin } from '../middleware/auth.middleware.js';
 const router = express.Router();
 
 router.get('/', getAllMenuItems);
-router.get('/:id', getMenuItemById);
-router.get('/by-restaurant/:restaurantId', getMenuItemsByRestaurant);
+router.get('/by-restaurant/:restaurantId', getMenuItemsByRestaurant); 
+router.get('/:id', getMenuItemById); 
 
 router.post('/', verifyFirebaseToken, isAdmin, createMenuItem);
 router.put('/:id', verifyFirebaseToken, isAdmin, updateMenuItem);
