@@ -89,14 +89,13 @@ const buildPath = path.join(__dirname, 'build');
 if (fs.existsSync(buildPath)) {
   app.use(express.static(buildPath));
 
-  
-  app.get(/^\/(?!api\/).*/, (req, res) => {
+  // ✅ Safe wildcard route
+  app.get('*', (req, res) => {
     res.sendFile(path.resolve(buildPath, 'index.html'));
   });
 } else {
   console.warn('⚠️ Build folder not found. Skipping frontend serving.');
 }
-
 
 const PORT = process.env.PORT || 5000;
 mongoose.connect(process.env.MONGO_URI)
