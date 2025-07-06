@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
           setCurrentUser(firebaseUser);
           setFirebaseToken(token);
           localStorage.setItem('firebaseToken', token);
+          const API = import.meta.env.VITE_API_URL;
 
           const res = await fetch(`${API}/users/check`, {
             headers: { Authorization: `Bearer ${token}` },
