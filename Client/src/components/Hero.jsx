@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Form, InputGroup, ListGroup } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import axios from "../api/axiosInstance"; 
+import axios from "../api/axiosInstance";
 
 const videoList = ["/video/food-bg1.mp4", "/video/food-bg3.mp4", "/video/food-bg2.mp4"];
 const fallbackImage = "/images/hero-fallback.jpg";
@@ -43,7 +43,7 @@ const Hero = () => {
       const filtered = allMenuItems.filter((item) =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
-      setFilteredSuggestions(filtered.slice(0, 5)); // show top 5
+      setFilteredSuggestions(filtered.slice(0, 5));
     }
   }, [searchQuery, allMenuItems]);
 
@@ -60,6 +60,11 @@ const Hero = () => {
 
   return (
     <div className="hero-container position-relative">
+      {/* Preload videos for smoother switching */}
+      {videoList.map((video) => (
+        <link key={video} rel="preload" as="video" href={video} type="video/mp4" />
+      ))}
+
       {!isMobile ? (
         <video
           key={videoList[currentVideoIndex]}
@@ -67,8 +72,7 @@ const Hero = () => {
           muted
           loop
           playsInline
-          className="w-100"
-          style={{ height: "100vh", objectFit: "cover", filter: "brightness(0.5)" }}
+          className="w-100 hero-video"
         >
           <source src={videoList[currentVideoIndex]} type="video/mp4" />
         </video>
@@ -76,7 +80,8 @@ const Hero = () => {
         <img
           src={fallbackImage}
           alt="Delicious Food"
-          style={{ width: "100%", height: "100vh", objectFit: "cover", filter: "brightness(0.5)" }}
+          className="w-100"
+          style={{ height: "100vh", objectFit: "cover", filter: "brightness(0.5)" }}
         />
       )}
 
