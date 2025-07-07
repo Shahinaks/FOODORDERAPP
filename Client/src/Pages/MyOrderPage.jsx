@@ -182,18 +182,35 @@ const MyOrderPage = () => {
       </Table>
 
       {totalPages > 1 && (
-        <Pagination>
-          {[...Array(totalPages)].map((_, idx) => (
-            <Pagination.Item
-              key={idx}
-              active={currentPage === idx + 1}
-              onClick={() => setCurrentPage(idx + 1)}
-            >
-              {idx + 1}
-            </Pagination.Item>
-          ))}
+        <Pagination className="justify-content-center mt-3">
+          <Pagination.First onClick={() => setCurrentPage(1)} disabled={currentPage === 1} />
+          <Pagination.Prev onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} />
+
+          {currentPage > 2 && <Pagination.Ellipsis disabled />}
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter(page =>
+              page === 1 ||
+              page === totalPages ||
+              Math.abs(currentPage - page) <= 1
+            )
+            .map((page, index, self) => (
+              <Pagination.Item
+                key={page}
+                active={page === currentPage}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </Pagination.Item>
+            ))}
+
+          {currentPage < totalPages - 1 && <Pagination.Ellipsis disabled />}
+
+          <Pagination.Next onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} />
+          <Pagination.Last onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} />
         </Pagination>
       )}
+
       <ToastContainer position="bottom-end" className="p-3">
         <Toast
           show={showToast}
