@@ -255,7 +255,7 @@ const CheckoutPage = () => {
                       appliedCoupon={appliedCoupon}
                       paymentMethod={paymentMethod}
                       saveRecentAddress={saveRecentAddress}
-                      clearCart={fetchCart}
+                      clearCart={clearCart}
                       setShowToast={setShowToast}
                       setPlacingOrder={setPlacingOrder}
                     />
