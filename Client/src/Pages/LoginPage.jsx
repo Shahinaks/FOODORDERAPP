@@ -140,7 +140,7 @@ const LoginPage = () => {
       <div style={styles.wrapper}>
         <img src={loginBoardImage} alt="Login Background" style={styles.image} />
         <div style={formBoxStyle}>
-          <h5 style={headingStyle}>Welcome! 🍔 Foodie</h5>
+          <h5 style={headingStyle}>Welcome! 🍽️ Foodie</h5>
           {error && <Alert variant="danger">{error}</Alert>}
           {message && <Alert variant="success">{message}</Alert>}
 
@@ -201,7 +201,7 @@ const LoginPage = () => {
           </Form>
 
           <div style={styles.signupLink}>
-            Don’t have an account? <a href="/signup" style={styles.link}>Sign Up</a>
+            Don’t have an account? <Link to="/signup" style={styles.link}>Sign Up</Link>
           </div>
         </div>
       </div>
@@ -235,7 +235,8 @@ const styles = {
     transform: 'translate(-50%, -50%)',
     width: '20%',
     maxWidth: '320px',
-    fontFamily: '"Architects Daughter", "Courier New", monospace',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    fontWeight: 500,
     color: '#fff',
     padding: '0.5rem',
   },
@@ -250,9 +251,9 @@ const styles = {
   heading: {
     textAlign: 'center',
     marginBottom: '0.5rem',
-    fontWeight: '300',
+    fontWeight: '600',
     color: '#fff',
-    fontSize: '1.2rem',
+    fontSize: '1.4rem',
   },
   inputGroup: {
     marginBottom: '0.4rem',
