@@ -4,7 +4,7 @@ import App from './App'; // Make sure this is the correct component, or replace 
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import { WishlistProvider } from './context/WishlistContext';
-import { BrowserRouter } from 'react-router-dom'; // ✅ Add this line
+import { HashRouter } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'animate.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,7 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <HashRouter>
       <AuthProvider>
         <CartProvider>
           <WishlistProvider>
@@ -21,6 +21,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           </WishlistProvider>
         </CartProvider>
       </AuthProvider>
-    </BrowserRouter>
+    </HashRouter>
   </React.StrictMode>
 );
