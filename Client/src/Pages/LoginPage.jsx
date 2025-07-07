@@ -252,7 +252,7 @@ const styles = {
     textAlign: 'center',
     marginBottom: '0.5rem',
     fontWeight: '600',
-    color: '#fff',
+    color: '#FFA500',
     fontSize: '1.4rem',
   },
   inputGroup: {
