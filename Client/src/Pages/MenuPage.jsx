@@ -133,6 +133,8 @@ const MenuPage = () => {
     const matchesRestaurant = selectedRestaurants.length === 0 || selectedRestaurants.includes(item.restaurant?.name);
     return matchesSearch && matchesCategory && matchesPrice && matchesVeg && matchesRestaurant;
   });
+  const uniqueRestaurants = [...new Set(menuItems.map(i => i.restaurant?.name))].filter(Boolean);
+
   const renderFilters = () => (
     <>
       <h5 style={{ color: colors.brown }}>Filter by Category</h5>
@@ -206,8 +208,7 @@ const MenuPage = () => {
     );
   }
 
-  const uniqueRestaurants = [...new Set(menuItems.map(i => i.restaurant?.name))].filter(Boolean);
-
+  
   return (
     <>
       <NavSectionWithAvatar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
