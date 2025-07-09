@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Card, Button, Row, Col, Spinner, Container, Form, Badge
+  Card, Button, Row, Col, Spinner, Container, Form, Badge, Accordion 
 } from 'react-bootstrap';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -75,9 +75,20 @@ const MenuPage = () => {
   const { toggleWishlist, wishlistItems } = useWishlist();
 
   useEffect(() => {
-    const query = new URLSearchParams(location.search).get('search') || '';
-    setSearchTerm(query);
+    const queryParams = new URLSearchParams(location.search);
+    const categoryFromURL = queryParams.get('category');
+    const searchFromURL = queryParams.get('search') || '';
+    setSearchTerm(searchFromURL);
+
+
+    if (categoryFromURL) {
+      const formattedCategory = categoryFromURL.charAt(0).toUpperCase() + categoryFromURL.slice(1);
+      if (allCategories.includes(formattedCategory)) {
+        setSelectedCategories([formattedCategory]);
+      }
+    }
   }, [location.search]);
+
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -122,6 +133,70 @@ const MenuPage = () => {
     const matchesRestaurant = selectedRestaurants.length === 0 || selectedRestaurants.includes(item.restaurant?.name);
     return matchesSearch && matchesCategory && matchesPrice && matchesVeg && matchesRestaurant;
   });
+  const renderFilters = () => (
+    <>
+      <h5 style={{ color: colors.brown }}>Filter by Category</h5>
+      <div className="d-flex flex-wrap mb-3">
+        {allCategories.map((cat, idx) => (
+          <Badge
+            key={idx}
+            pill
+            bg={selectedCategories.includes(cat) ? 'dark' : 'light'}
+            text={selectedCategories.includes(cat) ? 'light' : 'dark'}
+            onClick={() => toggleCategory(cat)}
+            className="m-1 px-3 py-2"
+            style={{ cursor: 'pointer', border: `1px solid ${colors.brown}` }}
+          >
+            {categoryIcons[cat]} {cat}
+          </Badge>
+        ))}
+      </div>
+
+<h5 style={{ color: colors.brown }}>Price Range</h5>
+<Form.Select
+  value={priceLimit}
+  onChange={(e) => setPriceLimit(e.target.value)}
+  className="mb-3"
+>
+  <option value="10000">All Prices</option>
+  <option value="100">Under ₹100</option>
+  <option value="300">₹100 – ₹300</option>
+  <option value="500">₹300 – ₹500</option>
+  <option value="1000">₹500 – ₹1000</option>
+</Form.Select>
+
+      <h5 style={{ color: colors.brown }}>Veg / Non-Veg</h5>
+      <Form.Check type="radio" label="All" name="vegFilter" checked={vegFilter === 'All'} onChange={() => setVegFilter('All')} />
+      <Form.Check type="radio" label="Veg" name="vegFilter" checked={vegFilter === 'Veg'} onChange={() => setVegFilter('Veg')} />
+      <Form.Check type="radio" label="Non-Veg" name="vegFilter" checked={vegFilter === 'Non-Veg'} onChange={() => setVegFilter('Non-Veg')} />
+
+      <h5 className="mt-4" style={{ color: colors.brown }}>Restaurants</h5>
+      <div className="d-flex flex-wrap">
+        {uniqueRestaurants.map((name, idx) => (
+          <Badge
+            key={idx}
+            pill
+            bg={selectedRestaurants.includes(name) ? 'dark' : 'light'}
+            text={selectedRestaurants.includes(name) ? 'light' : 'dark'}
+            onClick={() => toggleRestaurant(name)}
+            className="m-1 px-3 py-2"
+            style={{ cursor: 'pointer', border: `1px solid ${colors.brown}` }}
+          >
+            {name}
+          </Badge>
+        ))}
+      </div>
+
+      <h5 className="mt-4" style={{ color: colors.brown }}>Sort By</h5>
+      <Form.Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+        <option value="">Default</option>
+        {sortOptions.map((opt, idx) => (
+          <option key={idx} value={opt.value}>{opt.label}</option>
+        ))}
+      </Form.Select>
+    </>
+  );
+
 
   if (loading) {
     return (
@@ -138,100 +213,50 @@ const MenuPage = () => {
       <NavSectionWithAvatar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <Container fluid className="py-4" style={{ backgroundColor: colors.bg, minHeight: '100vh', color: colors.text }}>
         <Row>
-          <Col xs={12} md={3}>
-            <h5 style={{ color: colors.brown }}>Filter by Category</h5>
-            <div className="d-flex flex-wrap mb-3">
-              {allCategories.map((cat, idx) => (
-                <Badge
-                  key={idx}
-                  pill
-                  bg={selectedCategories.includes(cat) ? 'dark' : 'light'}
-                  text={selectedCategories.includes(cat) ? 'light' : 'dark'}
-                  onClick={() => toggleCategory(cat)}
-                  className="m-1 px-3 py-2"
-                  style={{ cursor: 'pointer', border: `1px solid ${colors.brown}` }}
-                >
-                  {categoryIcons[cat]} {cat}
-                </Badge>
-              ))}
+          
+          <Col xs={12} md={3} className="order-1 order-md-1 mb-3">
+            <div className="d-md-block d-none">
+              {renderFilters()}
             </div>
-
-            <h5 style={{ color: colors.brown }}>Max Price</h5>
-            <Form.Label>₹{priceLimit}</Form.Label>
-            <Form.Range min={0} max={1000} step={10} value={priceLimit} onChange={(e) => setPriceLimit(e.target.value)} />
-
-            <h5 style={{ color: colors.brown }}>Veg / Non-Veg</h5>
-            <Form.Check type="radio" label="All" name="vegFilter" checked={vegFilter === 'All'} onChange={() => setVegFilter('All')} />
-            <Form.Check type="radio" label="Veg" name="vegFilter" checked={vegFilter === 'Veg'} onChange={() => setVegFilter('Veg')} />
-            <Form.Check type="radio" label="Non-Veg" name="vegFilter" checked={vegFilter === 'Non-Veg'} onChange={() => setVegFilter('Non-Veg')} />
-
-            <h5 className="mt-4" style={{ color: colors.brown }}>Restaurants</h5>
-            <div className="d-flex flex-wrap">
-              {uniqueRestaurants.map((name, idx) => (
-                <Badge
-                  key={idx}
-                  pill
-                  bg={selectedRestaurants.includes(name) ? 'dark' : 'light'}
-                  text={selectedRestaurants.includes(name) ? 'light' : 'dark'}
-                  onClick={() => toggleRestaurant(name)}
-                  className="m-1 px-3 py-2"
-                  style={{ cursor: 'pointer', border: `1px solid ${colors.brown}` }}
-                >
-                  {name}
-                </Badge>
-              ))}
+            <div className="d-md-none">
+              <Accordion>
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>Filter Options</Accordion.Header>
+                  <Accordion.Body>
+                    {renderFilters()}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
             </div>
-
-            <h5 className="mt-4" style={{ color: colors.brown }}>Sort By</h5>
-            <Form.Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-              <option value="">Default</option>
-              {sortOptions.map((opt, idx) => (
-                <option key={idx} value={opt.value}>{opt.label}</option>
-              ))}
-            </Form.Select>
           </Col>
 
-          <Col xs={12} md={6}>
+         
+          <Col xs={12} md={6} className="order-3 order-md-2">
             <h2 className="text-center mb-4" style={{ color: colors.brown }}>Our Menu</h2>
             <Row className="g-4">
               {filteredItems.map(item => (
                 <Col xs={12} sm={6} key={item._id}>
-                  <Card className="h-100" style={{ backgroundColor: colors.cream, color: colors.text, border: `1px solid ${colors.gold}`, borderRadius: '15px' }}>
-                    <Card.Img variant="top" src={item.image} style={{ height: '180px', objectFit: 'cover' }} />
-                    <Card.Body className="d-flex flex-column">
-                      <Card.Title style={{ color: colors.brown }}>{item.name}</Card.Title>
-                      <span className="mb-2 d-inline-block fw-bold" style={{ color: item.isVeg ? 'green' : 'red' }}>
-                        {item.isVeg ? '🟢 Veg' : '🔴 Non-Veg'}
-                      </span>
-                      <Card.Text>{item.description}</Card.Text>
-                      {showReviewId === item._id && currentUser && (
-                        <ReviewForm menuItemId={item._id} onSubmitted={() => setShowReviewId(null)} />
-                      )}
-                      <div className="mt-auto d-flex justify-content-between align-items-center">
-                        <span className="fw-bold" style={{ color: colors.gold }}>₹{item.price}</span>
-                        <div>
-                          <Button size="sm" variant="dark" onClick={() => currentUser ? addToCart(item) : toast.warning('Please login')}>Add</Button>
-                          <Button size="sm" variant={wishlistItems.find(w => w._id === item._id) ? 'danger' : 'outline-danger'} className="ms-2" onClick={() => currentUser ? toggleWishlist(item._id) : toast.warning('Please login')}>❤️</Button>
-                          {currentUser ? (
-                            <Button size="sm" variant="outline-primary" className="ms-2" onClick={() => setShowReviewId(showReviewId === item._id ? null : item._id)}>
-                              {showReviewId === item._id ? 'Cancel' : 'Write Review'}
-                            </Button>
-                          ) : (
-                            <Button size="sm" variant="outline-secondary" className="ms-2" disabled>
-                              Write Review
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </Card.Body>
-                  </Card>
+                  {/* your Card code */}
                 </Col>
               ))}
             </Row>
           </Col>
 
-          <Col xs={12} md={3} className="mt-4 mt-md-0">
-            <ReviewPanel />
+          
+          <Col xs={12} md={3} className="order-2 order-md-3 mb-4 mb-md-0">
+            <div className="d-md-block d-none">
+              <ReviewPanel />
+            </div>
+            <div className="d-md-none">
+              <Accordion>
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>See Reviews</Accordion.Header>
+                  <Accordion.Body>
+                    <ReviewPanel />
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </div>
           </Col>
         </Row>
       </Container>
