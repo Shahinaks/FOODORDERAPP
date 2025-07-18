@@ -9,7 +9,7 @@ const AdminActivityPage = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const { firebaseToken } = useAuth();
-//guiooppiuh
+
   const fetchLogs = async () => {
     setLoading(true);
     try {
