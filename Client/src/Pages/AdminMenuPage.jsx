@@ -31,6 +31,9 @@ const AdminMenuPage = () => {
     image: '',
   });
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   const fetchMenu = async () => {
     setLoading(true);
     try {
@@ -153,6 +156,12 @@ const AdminMenuPage = () => {
     setEditItem(null);
   };
 
+  // Pagination Logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = menuItems.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(menuItems.length / itemsPerPage);
+
   return (
     <AdminLayout>
       <Container className="py-4">
@@ -162,41 +171,58 @@ const AdminMenuPage = () => {
         {loading ? (
           <div className="text-center"><Spinner /></div>
         ) : (
-          <Table bordered striped responsive>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Restaurant</th>
-                <th>Category</th>
-                <th>Image</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {menuItems.map((item) => (
-                <tr key={item._id}>
-                  <td>{item.name}</td>
-                  <td>₹{item.price}</td>
-                  <td>{item.restaurant?.name || item.restaurant}</td>
-                  <td>{item.category?.name || item.category}</td>
-                  <td>
-                    {item.image && (
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        style={{ width: 60, height: 40, objectFit: 'cover' }}
-                      />
-                    )}
-                  </td>
-                  <td>
-                    <Button size="sm" variant="info" onClick={() => openModal(item)}>Edit</Button>{' '}
-                    <Button size="sm" variant="danger" onClick={() => handleDelete(item._id)}>Delete</Button>
-                  </td>
+          <>
+            <Table bordered striped responsive>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Price</th>
+                  <th>Restaurant</th>
+                  <th>Category</th>
+                  <th>Image</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {currentItems.map((item) => (
+                  <tr key={item._id}>
+                    <td>{item.name}</td>
+                    <td>₹{item.price}</td>
+                    <td>{item.restaurant?.name || item.restaurant}</td>
+                    <td>{item.category?.name || item.category}</td>
+                    <td>
+                      {item.image && (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          style={{ width: 60, height: 40, objectFit: 'cover' }}
+                        />
+                      )}
+                    </td>
+                    <td>
+                      <Button size="sm" variant="info" onClick={() => openModal(item)}>Edit</Button>{' '}
+                      <Button size="sm" variant="danger" onClick={() => handleDelete(item._id)}>Delete</Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+
+            {totalPages > 1 && (
+              <div className="d-flex justify-content-center align-items-center mt-3 gap-2 flex-wrap">
+                {[...Array(totalPages).keys()].map(num => (
+                  <Button
+                    key={num + 1}
+                    variant={currentPage === num + 1 ? 'primary' : 'outline-secondary'}
+                    size="sm"
+                    onClick={() => setCurrentPage(num + 1)}
+                  >
+                    {num + 1}
+                  </Button>
+                ))}
+              </div>
+            )}
+          </>
         )}
 
         <Modal show={showModal} onHide={() => setShowModal(false)}>
