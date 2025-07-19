@@ -14,8 +14,6 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
-const API = import.meta.env.VITE_API_URL;
-
 
 const WishlistPage = () => {
   const [wishlist, setWishlist] = useState([]);
@@ -45,7 +43,7 @@ const WishlistPage = () => {
     try {
       await axios.delete(`/wishlist/${menuItemId}`, getAuthHeaders());
       toast.success('Item removed from wishlist');
-      fetchWishlist();
+      setWishlist(prev => prev.filter(item => item._id !== menuItemId));
     } catch (err) {
       toast.error('Failed to remove item');
     }
@@ -55,7 +53,6 @@ const WishlistPage = () => {
     if (currentUser) fetchWishlist();
   }, [currentUser]);
 
-  // Optional: Load added-to-cart state from localStorage
   useEffect(() => {
     const stored = localStorage.getItem('addedToCartIds');
     if (stored) setAddedToCartIds(JSON.parse(stored));
@@ -200,9 +197,10 @@ const WishlistPage = () => {
                       <Button
                         style={{ ...styles.button, ...styles.addBtn }}
                         size="sm"
-                        onClick={() => {
-                          addToCart(item);
+                        onClick={async () => {
+                          await addToCart(item);
                           setAddedToCartIds(prev => [...prev, item._id]);
+                          await removeFromWishlist(item._id); // 👈 Auto-remove from wishlist
                         }}
                       >
                         Add to Cart
