@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../api/axiosInstance';
-import { Button, Form, Table, Alert } from 'react-bootstrap';
+import { Button, Form, Table, Alert, Pagination } from 'react-bootstrap';
 import AdminLayout from '../layouts/AdminLayout';
 import { useAuth } from '../context/AuthContext';
 
@@ -9,6 +9,10 @@ const AdminCouponPage = () => {
   const [coupons, setCoupons] = useState([]);
   const [form, setForm] = useState({ code: '', discountPercentage: '', expirationDate: '' });
   const [error, setError] = useState('');
+
+  const [activePage, setActivePage] = useState(1);
+  const [expiredPage, setExpiredPage] = useState(1);
+  const itemsPerPage = 5;
 
   const fetchCoupons = async () => {
     try {
@@ -51,6 +55,30 @@ const AdminCouponPage = () => {
 
   const validCoupons = coupons.filter(c => c.isActive && new Date(c.expirationDate) > new Date());
   const expiredCoupons = coupons.filter(c => !c.isActive || new Date(c.expirationDate) <= new Date());
+
+  const paginatedCoupons = (data, page) =>
+    data.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
+  const renderPagination = (totalItems, currentPage, onPageChange) => {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    if (totalPages <= 1) return null;
+
+    const pages = Array.from({ length: totalPages }, (_, idx) => idx + 1);
+
+    return (
+      <Pagination className="mt-2">
+        {pages.map((page) => (
+          <Pagination.Item
+            key={page}
+            active={page === currentPage}
+            onClick={() => onPageChange(page)}
+          >
+            {page}
+          </Pagination.Item>
+        ))}
+      </Pagination>
+    );
+  };
 
   return (
     <AdminLayout>
@@ -101,7 +129,7 @@ const AdminCouponPage = () => {
             </tr>
           </thead>
           <tbody>
-            {validCoupons.map((coupon) => (
+            {paginatedCoupons(validCoupons, activePage).map((coupon) => (
               <tr key={coupon._id}>
                 <td>{coupon.code}</td>
                 <td>{coupon.discountPercentage}</td>
@@ -113,6 +141,7 @@ const AdminCouponPage = () => {
             ))}
           </tbody>
         </Table>
+        {renderPagination(validCoupons.length, activePage, setActivePage)}
 
         {expiredCoupons.length > 0 && (
           <>
@@ -127,7 +156,7 @@ const AdminCouponPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {expiredCoupons.map((coupon) => (
+                {paginatedCoupons(expiredCoupons, expiredPage).map((coupon) => (
                   <tr key={coupon._id}>
                     <td>{coupon.code}</td>
                     <td>{coupon.discountPercentage}</td>
@@ -139,6 +168,7 @@ const AdminCouponPage = () => {
                 ))}
               </tbody>
             </Table>
+            {renderPagination(expiredCoupons.length, expiredPage, setExpiredPage)}
           </>
         )}
       </div>
