@@ -186,8 +186,9 @@ const LoginPage = () => {
           </Form>
 
           <div style={styles.signupLink}>
-            Don’t have an account? <a href="/signup" style={styles.link}>Sign Up</a>
+            Don’t have an account? <Link to="/signup" style={styles.link}>Sign Up</Link>
           </div>
+
         </div>
       </div>
     </div>
