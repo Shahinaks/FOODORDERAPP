@@ -24,7 +24,6 @@ const SignupPage = () => {
 
   const navigate = useNavigate();
   const auth = getAuth();
-  const provider = new GoogleAuthProvider();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -32,8 +31,7 @@ const SignupPage = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,6 +49,9 @@ const SignupPage = () => {
 
   const handleGoogleLogin = async () => {
     try {
+      const provider = new GoogleAuthProvider();
+      provider.setPrompt('select_account'); // ✅ Force account chooser
+
       await signInWithPopup(auth, provider);
       navigate('/menu');
     } catch (err) {
