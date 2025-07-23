@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+
 import AppNavbar from './components/Navbar';
 import Home from './Pages/Home';
 import LoginPage from './Pages/LoginPage';
@@ -26,7 +27,7 @@ import AdminCouponPage from './Pages/AdminCouponPage';
 import AdminPaymentsPage from './Pages/AdminPaymentsPage';
 import AdminNotificationPage from './Pages/AdminNotificationPage';
 
-
+import ProfilePage from './Pages/ProfilePage'; // ✅ Added import
 import useNotificationListener from './hooks/useNotificationListener'; 
 
 const AppRoutes = () => {
@@ -44,6 +45,7 @@ const AppRoutes = () => {
       {!hideMainNavbar && <AppNavbar onProfileClick={() => setShowProfile(true)} />}
 
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
@@ -57,6 +59,7 @@ const AppRoutes = () => {
         <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
         <Route path="/checkout" element={<StripeWrapper />} />
         <Route path="/notifications" element={<NotificationPage />} />
+        <Route path="/profile" element={<ProfilePage />} /> {/* ✅ Added Route */}
 
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminDashboardPage />} />
@@ -68,7 +71,6 @@ const AppRoutes = () => {
         <Route path="/admin/coupons" element={<AdminCouponPage />} />
         <Route path="/admin/payments" element={<AdminPaymentsPage />} />
         <Route path="/admin/notifications" element={<AdminNotificationPage />} />
-
       </Routes>
 
       <ProfileModal show={showProfile} handleClose={() => setShowProfile(false)} />
