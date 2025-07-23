@@ -7,8 +7,9 @@ import {
   sendPasswordResetEmail,
   EmailAuthProvider,
   linkWithCredential,
+  GoogleAuthProvider,
 } from 'firebase/auth';
-import { auth, googleProvider } from '../firebase';
+import { auth } from '../firebase';
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import loginBoardImage from '../assets/login-tablet-bg.png';
 
@@ -40,8 +41,6 @@ const LoginPage = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, form.email, form.password);
       const user = userCredential.user;
-      console.log("Logged in UID:", user.uid); 
-
       const token = await user.getIdToken();
       localStorage.setItem('firebase_token', token);
 
@@ -54,7 +53,6 @@ const LoginPage = () => {
 
       navigate(data.user.role === 'admin' ? '/admin/overview' : '/menu');
     } catch (err) {
-      console.error('Login error:', err.code);
       if (err.code === 'auth/user-not-found') {
         setError('User not found. Please check your email or sign up.');
       } else if (err.code === 'auth/wrong-password') {
@@ -73,23 +71,11 @@ const LoginPage = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      console.log('Google login:', user.email);
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' }); // ✅ Correct method
 
-      const providerAlreadyLinked = user.providerData.some(p => p.providerId === 'password');
-      if (!providerAlreadyLinked) {
-        const emailCredential = EmailAuthProvider.credential(form.email, form.password);
-        try {
-          await linkWithCredential(user, emailCredential);
-        } catch (linkErr) {
-          console.error('Linking error:', linkErr.code);
-          if (linkErr.code === 'auth/provider-already-linked') {
-            setError('This account is already linked with a password. Try logging in manually.');
-            return;
-          }
-        }
-      }
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
 
       const token = await user.getIdToken();
       localStorage.setItem('firebase_token', token);
@@ -118,7 +104,6 @@ const LoginPage = () => {
       setError('Failed to send reset email');
     }
   };
-
   const formBoxStyle = {
     ...styles.formBox,
     ...(isMobile ? styles.formBoxMobile : {
@@ -140,7 +125,7 @@ const LoginPage = () => {
       <div style={styles.wrapper}>
         <img src={loginBoardImage} alt="Login Background" style={styles.image} />
         <div style={formBoxStyle}>
-          <h5 style={headingStyle}>Welcome! 🍽️ Foodie</h5>
+          <h5 style={headingStyle}>Welcome! 🍔 Foodie</h5>
           {error && <Alert variant="danger">{error}</Alert>}
           {message && <Alert variant="success">{message}</Alert>}
 
@@ -201,7 +186,7 @@ const LoginPage = () => {
           </Form>
 
           <div style={styles.signupLink}>
-            Don’t have an account? <Link to="/signup" style={styles.link}>Sign Up</Link>
+            Don’t have an account? <a href="/signup" style={styles.link}>Sign Up</a>
           </div>
         </div>
       </div>
@@ -235,8 +220,7 @@ const styles = {
     transform: 'translate(-50%, -50%)',
     width: '20%',
     maxWidth: '320px',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-    fontWeight: 500,
+    fontFamily: '"Architects Daughter", "Courier New", monospace',
     color: '#fff',
     padding: '0.5rem',
   },
@@ -251,9 +235,9 @@ const styles = {
   heading: {
     textAlign: 'center',
     marginBottom: '0.5rem',
-    fontWeight: '600',
-    color: '#FFA500',
-    fontSize: '1.4rem',
+    fontWeight: '300',
+    color: '#fff',
+    fontSize: '1.2rem',
   },
   inputGroup: {
     marginBottom: '0.4rem',
